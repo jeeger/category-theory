@@ -5,6 +5,7 @@
 using namespace std;
 
 
+// Optional (or "Nullable") type for C++.
 template<class A> class optional {
   bool _isValid;
   A _value;
@@ -16,6 +17,7 @@ public:
   A value() const { return _value; };
 };
 
+// Implement output for debugging.
 template<class T> ostream& operator<<(ostream& out, optional<T> arg) {
   if (arg.isValid()) {
     out << arg.value();
@@ -25,10 +27,12 @@ template<class T> ostream& operator<<(ostream& out, optional<T> arg) {
   return out;
 }
 
+// "Return" operation
 template<class A> optional<A> identity(A val) {
   return optional<A>(val);
 }
 
+// "Bind" operation
 template<class A, class B, class C> function<optional<C>(A)> compose(function<optional<B>(A)> f1, function<optional<C>(B)> f2) {
   return [f1, f2](A val) -> optional<C> {
     auto val1 = f1(val);
@@ -50,7 +54,9 @@ optional<double> safeReciprocal(double x) {
 }
 
 int main(int argc, char* argv[]) {
-  auto composed = compose(function<optional<double>(double)>(safeRoot), function<optional<double>(double)>(safeReciprocal));
-
+  auto composed = compose(function<optional<double>(double)>(safeRoot),
+			  function<optional<double>(double)>(safeReciprocal));
   cout << composed(0) << endl;
+  cout << composed(10) << endl;
+  cout << composed(-5) << endl;
 }
